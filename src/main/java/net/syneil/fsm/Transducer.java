@@ -8,7 +8,7 @@ package net.syneil.fsm;
  * @param <T> the type used for inputs
  * @param <U> the type used for outputs
  */
-public interface Transducer<S, T, U> extends Classifier<T, Boolean>, Acceptor<T> {
+public interface Transducer<S, T, U> extends Classifier<S, T, Boolean>, Acceptor<S, T> {
 
     /**
      * Applies one input symbol to this finite state machine

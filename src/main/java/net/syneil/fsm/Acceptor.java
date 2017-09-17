@@ -7,9 +7,10 @@ import java.util.stream.Stream;
  * sequence is accepted only if every element is accepted and when there are no more elements, the machine is in an end
  * state.
  *
+ * @param <S> the type used for states
  * @param <T> the type used for inputs
  */
-public interface Acceptor<T> extends Classifier<T, Boolean> {
+public interface Acceptor<S, T> extends Classifier<S, T, Boolean> {
 
     /**
      * Accepts all inputs from the stream, if possible, and tests if the resultant state of the machine is an end state.
