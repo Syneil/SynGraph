@@ -6,22 +6,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class FSMTest {
+class FSMTest {
     private StringBuilder output;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.output = new StringBuilder();
     }
 
     @Test
-    public void testMod3Machine() {
+    void testMod3Machine() {
         FSM<String, Character, String> fsm = buildMod3Machine();
         assertTrue(fsm.isInStartState());
         assertTrue(fsm.isInEndState());
@@ -43,7 +42,7 @@ public class FSMTest {
     }
 
     @Test
-    public void testMod3MachineNoAlpha() {
+    void testMod3MachineNoAlpha() {
         assertThrows(NoTransitionForSymbolException.class, () -> buildMod3Machine().accept('A'));
     }
 
@@ -54,13 +53,19 @@ public class FSMTest {
         fsmBuilder.addState("1", false);
         fsmBuilder.addState("2", false);
 
-        Function<Character, String> mod3_0 = c -> isOneOf(Arrays.asList('0', '3', '6', '9')).test(c) ? "=" : null;
-        Function<Character, String> mod3_1 = c -> isOneOf(Arrays.asList('1', '4', '7')).test(c) ? "+" : null;
-        Function<Character, String> mod3_2 = c -> isOneOf(Arrays.asList('2', '5', '8')).test(c) ? "-" : null;
+        Function<Character, String> mod3_0 = c -> isOneOf('0', '3', '6', '9').test(c) ? "=" : null;
+        Function<Character, String> mod3_1 = c -> isOneOf('1', '4', '7').test(c) ? "+" : null;
+        Function<Character, String> mod3_2 = c -> isOneOf('2', '5', '8').test(c) ? "-" : null;
 
-        fsmBuilder.addTransition("0", mod3_0, "0").addTransition("1", mod3_0, "1").addTransition("2", mod3_0, "2");
-        fsmBuilder.addTransition("0", mod3_1, "1").addTransition("1", mod3_1, "2").addTransition("2", mod3_1, "0");
-        fsmBuilder.addTransition("0", mod3_2, "2").addTransition("1", mod3_2, "0").addTransition("2", mod3_2, "1");
+        fsmBuilder.addTransition("0", mod3_0, "0")
+                .addTransition("1", mod3_0, "1")
+                .addTransition("2", mod3_0, "2");
+        fsmBuilder.addTransition("0", mod3_1, "1")
+                .addTransition("1", mod3_1, "2")
+                .addTransition("2", mod3_1, "0");
+        fsmBuilder.addTransition("0", mod3_2, "2")
+                .addTransition("1", mod3_2, "0")
+                .addTransition("2", mod3_2, "1");
 
         return fsmBuilder.build();
     }

@@ -149,7 +149,7 @@ public interface Graph<V, E> {
      * @param <V> the type used for vertices
      * @param <E> the type used for edge labels
      */
-    public interface Edge<V, E> {
+    interface Edge<V, E> {
         /** @return true if this edge is directed, false otherwise */
         boolean isDirected();
 

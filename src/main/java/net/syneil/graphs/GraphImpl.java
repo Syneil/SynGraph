@@ -28,7 +28,7 @@ public class GraphImpl<V, E> implements Graph<V, E> {
     @Override
     public long numberOfEdges() {
         // number of edges according to the data representation
-        final long dataEdges = this.data.values().stream().flatMap(Set::stream).count();
+        final long dataEdges = this.data.values().stream().mapToLong(Set::size).sum();
 
         // but non-directed edges will be counted twice
         final long undirectedEdges = this.data.values().stream().flatMap(Set::stream).filter(edge -> !edge.isDirected())
@@ -45,7 +45,7 @@ public class GraphImpl<V, E> implements Graph<V, E> {
 
     @Override
     public Stream<Edge<V, E>> edges() {
-        return this.data.values().stream().flatMap(Set::stream);
+        return this.data.values().stream().flatMap(Set::stream).distinct();
     }
 
     @Override
@@ -123,12 +123,12 @@ public class GraphImpl<V, E> implements Graph<V, E> {
 
     @Override
     public Set<Edge<V, E>> getEdges(final V source) {
-        return this.data.get(source);
+        return hasVertex(source) ? this.data.get(source) : Collections.emptySet();
     }
 
     @Override
     public boolean removeEdges(final V source, final V target) {
-        return this.data.get(source).removeIf(e -> Objects.equals(target, e.getTarget()));
+        return hasVertex(source) && this.data.get(source).removeIf(e -> Objects.equals(target, e.getTarget()));
     }
 
     /**
