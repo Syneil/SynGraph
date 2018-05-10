@@ -9,18 +9,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import net.syneil.graphs.constraints.Multiplicity;
-import net.syneil.graphs.constraints.Orientation;
-
 /**
  * A graph is a data structure consisting of a set of vertices (nodes, points) connected by a set of edges (arcs,
  * lines).
- * <p>
- * Graphs are distinguished by two primary properties: {@link Orientation orientation} and
- * {@link Multiplicity multiplicity}.
  *
  * @param <V> the type used for vertices
- * @param <E> the type used for edges
+ * @param <E> the type used for edge labels
  */
 public interface Graph<V, E> {
     /** @return the number of vertices in this graph */
