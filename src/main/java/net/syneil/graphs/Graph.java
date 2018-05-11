@@ -17,16 +17,24 @@ import java.util.stream.Stream;
  * @param <E> the type used for edge labels
  */
 public interface Graph<V, E> {
-    /** @return the number of vertices in this graph */
+    /**
+     * @return the number of vertices in this graph
+     */
     long numberOfVertices();
 
-    /** @return the number of edges in this graph */
+    /**
+     * @return the number of edges in this graph
+     */
     long numberOfEdges();
 
-    /** @return all of the vertices in this graph as a stream */
-    Stream<V> vertices();
+    /**
+     * @return all of the vertices in this graph as a stream
+     */
+    Stream<? extends V> vertices();
 
-    /** @return all of the edges in this graph as a stream */
+    /**
+     * @return all of the edges in this graph as a stream
+     */
     Stream<? extends Edge<V, E>> edges();
 
     /**
@@ -41,7 +49,6 @@ public interface Graph<V, E> {
      *
      * @param source the source vertex
      * @param target the target vertex
-     *
      * @return true if there is an edge from the source to the target
      */
     boolean hasEdge(V source, V target);
@@ -54,14 +61,14 @@ public interface Graph<V, E> {
      * @param v the vertex whose neighbours are to be found
      * @return the set of every vertex in this graph such that {@link #hasEdge hasEdge(v, vertex)} is true
      */
-    Set<V> neighbours(V v);
+    Set<? extends V> neighbours(V v);
 
     /**
      * Adds a vertex to this graph if it is not already a part of it
      *
      * @param v the vertex to add
      * @return true if this graph was updated as a result of this call; false otherwise (the vertex was already in this
-     *         graph)
+     * graph)
      */
     boolean addVertex(V v);
 
@@ -70,7 +77,7 @@ public interface Graph<V, E> {
      *
      * @param v the vertex to remove
      * @return true if the graph was updated as a result of this call; false otherwise (the vertex was not in this
-     *         graph)
+     * graph)
      */
     boolean removeVertex(V v);
 
@@ -78,12 +85,12 @@ public interface Graph<V, E> {
      * Adds an edge from v1 to v2 with the given label. Note that for undirected edges, the notions of "source" and
      * "target" vertices are irrelevant
      *
-     * @param source the source vertex
-     * @param label the edge label
-     * @param target the target vertex
+     * @param source   the source vertex
+     * @param label    the edge label
+     * @param target   the target vertex
      * @param directed true if the edge is directed, false otherwise
      * @return true if this graph was updated as a result of this call; false otherwise (the edge was already in this
-     *         graph and cannot be repeated)
+     * graph and cannot be repeated)
      */
     boolean addEdge(V source, E label, V target, boolean directed);
 
@@ -113,7 +120,7 @@ public interface Graph<V, E> {
      * @param source the source vertex
      * @param target the target vertex
      * @return true if this graph was updated as a result of this call; false otherwise (no such edges were in this
-     *         graph)
+     * graph)
      */
     boolean removeEdges(V source, V target);
 
@@ -132,9 +139,9 @@ public interface Graph<V, E> {
     /**
      * @return the vertices of this graph represented as an adjacency list (without edge labels)
      */
-    default Map<V, List<V>> adjacencyList() {
+    default Map<? extends V, ? extends List<V>> adjacencyList() {
         return vertices().collect(HashMap::new, (map, vertex) -> map.put(vertex, new ArrayList<>(neighbours(vertex))),
-                                  null);
+                HashMap::putAll);
     }
 
     /**
@@ -144,7 +151,9 @@ public interface Graph<V, E> {
      * @param <E> the type used for edge labels
      */
     interface Edge<V, E> {
-        /** @return true if this edge is directed, false otherwise */
+        /**
+         * @return true if this edge is directed, false otherwise
+         */
         boolean isDirected();
 
         /**
@@ -153,44 +162,46 @@ public interface Graph<V, E> {
          */
         boolean connects(V vertex);
 
-        /** @return the label attached to this edge, optionally */
-        Optional<E> getLabel();
+        /**
+         * @return the label attached to this edge, optionally
+         */
+        Optional<? extends E> getLabel();
 
         /**
          * @param vertex the vertex to compare
          * @return true if this edge {@link #isDirected} and the vertex is this edge's source, or if this edge is
-         *         undirected and {@link #connects} the vertex; false if neither of these are the case
+         * undirected and {@link #connects} the vertex; false if neither of these are the case
          */
         boolean hasSource(V vertex);
 
         /**
          * @param vertex the vertex to compare
          * @return true if this edge {@link #isDirected} and the vertex is this edge's target, or if this edge is
-         *         undirected and {@link #connects} the vertex; false if neither of these are the case
+         * undirected and {@link #connects} the vertex; false if neither of these are the case
          */
         boolean hasTarget(V vertex);
 
         /**
          * @return the source vertex of this edge if this edge {@link #isDirected}, or one of the vertices this edge
-         *         {@link #connects} otherwise (must be the other end of this edge to that returned by
-         *         {@link #getTarget}).
+         * {@link #connects} otherwise (must be the other end of this edge to that returned by
+         * {@link #getTarget}).
          */
         V getSource();
 
         /**
          * @return the target vertex of this edge if this edge {@link #isDirected}, or one of the vertices this edge
-         *         {@link #connects} otherwise (must be the other end of this edge to that returned by
-         *         {@link #getSource}).
+         * {@link #connects} otherwise (must be the other end of this edge to that returned by
+         * {@link #getSource}).
          */
         V getTarget();
 
         /**
          * @param vertex one of the vertices this edge connects (otherwise the empty optional will be returned)
          * @return the "other" vertex that this edge connects, or the empty optional if this edge does not connect the
-         *         vertex
+         * vertex
          */
-        default Optional<V> other(final V vertex) {
-            Optional<V> result = Optional.empty();
+        default Optional<? extends V> other(final V vertex) {
+            Optional<? extends V> result = Optional.empty();
             if (Objects.equals(getSource(), vertex)) {
                 result = Optional.of(getTarget());
             } else if (Objects.equals(getTarget(), vertex)) {
