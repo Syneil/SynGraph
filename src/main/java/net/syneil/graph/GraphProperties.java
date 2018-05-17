@@ -6,16 +6,6 @@ import lombok.ToString;
 
 /**
  * Definition of the core properties of a graph implementation.
- * <p>
- * The {@code net.syneil.graph} package contains the following:
- * <pre>
- *                                  Orientation Looping   Multiplicity Labelling  Expansion    Backing
- * .adjlist.BasicListGraph          DIRECTED    PERMITTED SINGLE       UNLABELLED UNRESTRICTED ADJ_LIST
- * .adjmatrix.BasicMatrixGraph      DIRECTED    PERMITTED SINGLE       UNLABELLED LIMITED      ADJ_MATRIX
- * .adjmatrix.LabelledMatrixGraph   DIRECTED    PERMITTED SINGLE       LABELLED   LIMITED      ADJ_MATRIX
- * .adjmatrix.UndirectedMatrixGraph UNDIRECTED  PERMITTED SINGLE       UNLABELLED LIMITED      ADJ_MATRIX
- * .nodes.NodeGraph                 DIRECTED    PERMITTED SINGLE       LABELLED   UNRESTRICTED NODE_SET
- * </pre>
  *
  * @see Orientation
  * @see Looping

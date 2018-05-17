@@ -7,7 +7,13 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-public class EdgeGraphTest extends GraphTest<String, LabelledEdge<String, String>, EdgeListGraph<String, LabelledEdge<String, String>>> {
+/**
+ * Tests the {@link EdgeListGraph} is a valid implementation of {@link MutableGraph}.
+ */
+public class EdgeListGraphTest extends GraphTest<String, // vertex
+                                                 LabelledEdge<String, String>, // edge
+                                                 EdgeListGraph<String, // graph impl
+                                                               LabelledEdge<String, String>>> {
     @Override
     protected EdgeListGraph<String, LabelledEdge<String, String>> getEmptyGraph() {
         return new EdgeListGraph<>();

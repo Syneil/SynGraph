@@ -50,13 +50,12 @@ public interface Edge<V> {
      * @return the "other" vertex that this edge connects, or the empty optional if this edge does not connect the
      * vertex
      */
-    default Optional<? extends V> other(final V vertex) {
-        Optional<? extends V> result = Optional.empty();
-        if (Objects.equals(getSource(), vertex)) {
-            result = Optional.of(getTarget());
-        } else if (Objects.equals(getTarget(), vertex)) {
-            result = Optional.of(getSource());
-        }
-        return result;
+    default Optional<V> other(final V vertex) {
+        Objects.requireNonNull(vertex);
+        V source = getSource(), target = getTarget();
+        return Optional.ofNullable(
+                vertex.equals(source) ? target
+                        : vertex.equals(target) ? source
+                        : null);
     }
 }

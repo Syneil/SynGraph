@@ -1,5 +1,11 @@
 package net.syneil.graph;
 
+/**
+ * Adds mutation operations to the basic {@link Graph} contract.
+ *
+ * @param <V> the type used for vertices
+ * @param <E> the type used for edges
+ */
 public interface MutableGraph<V, E extends Edge<V>> extends Graph<V, E> {
 
     /**
