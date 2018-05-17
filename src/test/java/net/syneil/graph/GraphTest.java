@@ -1,41 +1,35 @@
-package net.syneil.graphs;
+package net.syneil.graph;
 
+import net.syneil.graph.edge.ObjectLabelledEdge;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @SuppressWarnings("unused")
-public abstract class GraphTest<V, E, G extends Graph<V, E>> {
+public abstract class GraphTest<V, E extends Edge<V>, G extends MutableGraph<V, E>> {
 
-    private static <E> Supplier<E> invalidEdgeTest() {
-        return () -> {
-            fail("Invalid test");
-            return null;
-        };
-    }
-
-    private G graph;
+    protected G graph;
     private Supplier<V> vertexSupplier;
-    private Supplier<E> edgeLabelSupplier;
+    private BiFunction<V, V, E> edgeGenerator;
 
-    abstract G getEmptyGraph();
+    protected abstract G getEmptyGraph();
 
-    abstract Supplier<V> getVertexSupplier();
+    protected abstract Supplier<V> getVertexSupplier();
 
-    abstract Supplier<E> getEdgeLabelSupplier();
+    protected abstract BiFunction<V, V, E> getEdgeGenerator();
 
     @BeforeEach
     final void prepareEmptyGraph() {
         graph = getEmptyGraph();
         vertexSupplier = getVertexSupplier();
-        edgeLabelSupplier = getEdgeLabelSupplier();
+        edgeGenerator = getEdgeGenerator();
     }
 
     @Test
@@ -92,7 +86,7 @@ public abstract class GraphTest<V, E, G extends Graph<V, E>> {
         class WithSelfEdge {
             @BeforeEach
             final void addSelfEdge() {
-                assertTrue(graph.addEdge(firstVertex, edgeLabelSupplier.get(), firstVertex, true));
+                assertTrue(graph.addEdge(edgeGenerator.apply(firstVertex, firstVertex)));
             }
 
             @Test
@@ -123,11 +117,14 @@ public abstract class GraphTest<V, E, G extends Graph<V, E>> {
 
             @Nested
             class TheSelfEdge {
-                Graph.Edge<V, E> theSelfEdge;
+                Edge<V> theSelfEdge;
 
                 @BeforeEach
                 final void extractTheSelfEdge() {
-                    theSelfEdge = graph.edges().findAny().orElseGet(invalidEdgeTest());
+                    theSelfEdge = graph.edges().findAny().orElseGet(() -> {
+                        fail("Invalid test");
+                        return null;
+                    });
                 }
 
                 @Test
@@ -202,12 +199,9 @@ public abstract class GraphTest<V, E, G extends Graph<V, E>> {
 
             @Nested
             class WithEdgeBetweenThem {
-                E edgeLabel;
-
                 @BeforeEach
                 final void addEdge() {
-                    edgeLabel = edgeLabelSupplier.get();
-                    assertTrue(graph.addEdge(firstVertex, edgeLabel, secondVertex, true));
+                    assertTrue(graph.addEdge(edgeGenerator.apply(firstVertex, secondVertex)));
                 }
 
                 @Test
@@ -227,11 +221,14 @@ public abstract class GraphTest<V, E, G extends Graph<V, E>> {
 
                 @Nested
                 class TheBridgingEdge {
-                    Graph.Edge<V, E> theBridgingEdge;
+                    Edge<V> theBridgingEdge;
 
                     @BeforeEach
                     final void extractTheBridgingEdge() {
-                        theBridgingEdge = graph.edges().findAny().orElseGet(invalidEdgeTest());
+                        theBridgingEdge = graph.edges().findAny().orElseGet(() -> {
+                            fail("Invalid test");
+                            return null;
+                        });
                     }
 
                     @Test
@@ -264,7 +261,20 @@ public abstract class GraphTest<V, E, G extends Graph<V, E>> {
                     }
 
                     @Test
-                    final void oneVertexZeroEdgesAgain() {
+                    final void secondVertexZeroEdges() {
+                        testSizes(1, 0);
+                    }
+                }
+
+                @Nested
+                class WithSecondVertexRemoved {
+                    @BeforeEach
+                    final void removeSecondVertex() {
+                        assertTrue(graph.removeVertex(secondVertex));
+                    }
+
+                    @Test
+                    final void firstVertexZeroEdgesAgain() {
                         testSizes(1, 0);
                     }
                 }
@@ -273,13 +283,13 @@ public abstract class GraphTest<V, E, G extends Graph<V, E>> {
     }
 
     private void testSizes(int numberOfVertices, int numberOfEdges) {
-        assertAll(() -> assertEquals(numberOfVertices, graph.numberOfVertices()),
-                () -> assertEquals(numberOfEdges, graph.numberOfEdges()),
-                () -> assertEquals(numberOfVertices, graph.vertices().count()),
-                () -> assertEquals(numberOfEdges, graph.edges().count()));
+        assertAll(() -> assertEquals(numberOfVertices, graph.numberOfVertices(), "numberOfVertices incorrect"),
+                () -> assertEquals(numberOfEdges, graph.numberOfEdges(), "numberOfEdges incorrect"),
+                () -> assertEquals(numberOfVertices, graph.vertices().count(), "vertices.count incorrect"),
+                () -> assertEquals(numberOfEdges, graph.edges().count(), "edges.count incorrect"));
     }
 
-    private Predicate<Graph.Edge<V, E>> isBetween(V source, V target) {
+    private Predicate<Edge<V>> isBetween(V source, V target) {
         return edge -> edge.hasSource(source) && edge.hasTarget(target);
     }
 }
