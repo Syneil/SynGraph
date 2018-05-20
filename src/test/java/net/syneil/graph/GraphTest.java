@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static net.syneil.graph.Edge.isBetween;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -360,23 +360,12 @@ public abstract class GraphTest<V, E extends Edge<V>, G extends MutableGraph<V, 
      * Convenience method to test the vertex and edge counts of {@link #graph}
      *
      * @param numberOfVertices the expected number of vertices
-     * @param numberOfEdges the expected number of edges
+     * @param numberOfEdges    the expected number of edges
      */
     private void testSizes(int numberOfVertices, int numberOfEdges) {
         assertAll(() -> assertEquals(numberOfVertices, graph.numberOfVertices(), "numberOfVertices incorrect"),
                 () -> assertEquals(numberOfEdges, graph.numberOfEdges(), "numberOfEdges incorrect"),
                 () -> assertEquals(numberOfVertices, graph.vertices().count(), "vertices.count incorrect"),
                 () -> assertEquals(numberOfEdges, graph.edges().count(), "edges.count incorrect"));
-    }
-
-    /**
-     * Common predicate on an edge to check it is from a specified source to a specified target
-     *
-     * @param source the source vertex of a matching edge
-     * @param target the target vertex of a matching edge
-     * @return a predicate that tests an edge is from the source to the target
-     */
-    private Predicate<Edge<V>> isBetween(V source, V target) {
-        return edge -> edge.hasSource(source) && edge.hasTarget(target);
     }
 }

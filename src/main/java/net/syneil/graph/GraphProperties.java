@@ -1,8 +1,9 @@
 package net.syneil.graph;
 
 import lombok.Builder;
-import lombok.Getter;
 import lombok.ToString;
+
+import java.util.Optional;
 
 /**
  * Definition of the core properties of a graph implementation.
@@ -10,11 +11,7 @@ import lombok.ToString;
  * @see Orientation
  * @see Looping
  * @see Multiplicity
- * @see Labelling
- * @see Expansion
- * @see Backing
  */
-@Getter
 @Builder
 @ToString
 public final class GraphProperties {
@@ -34,19 +31,25 @@ public final class GraphProperties {
     private final Multiplicity multiplicity;
 
     /**
-     * The edge label policy of the graph
+     * @return the orientation of the graph, optionally
      */
-    private final Labelling labelling;
+    public Optional<Orientation> getOrientation() {
+        return Optional.ofNullable(orientation);
+    }
 
     /**
-     * The expansibility of the graph
+     * @return the looping policy of the graph, optionally
      */
-    private final Expansion expansion;
+    public Optional<Looping> getLooping() {
+        return Optional.ofNullable(looping);
+    }
 
     /**
-     * The underlying implementation of the graph structure
+     * @return the edge-multiplicity of the graph, optionally
      */
-    private final Backing backing;
+    public Optional<Multiplicity> getMultiplicity() {
+        return Optional.ofNullable(multiplicity);
+    }
 
     /**
      * The orientation of a graph
@@ -91,55 +94,5 @@ public final class GraphProperties {
          * Any number of edges may exist between two vertices
          */
         MULTIPLE
-    }
-
-    /**
-     * The edge label policy of a graph
-     */
-    public enum Labelling {
-        /**
-         * The edges carry labels
-         */
-        LABELLED,
-
-        /**
-         * The edges do not carry labels
-         */
-        UNLABELLED
-    }
-
-    /**
-     * The expansibility of a graph
-     */
-    public enum Expansion {
-        /**
-         * The graph may only contain a limited number of vertices
-         */
-        LIMITED,
-
-        /**
-         * There is no restriction on the number of vertices
-         */
-        UNRESTRICTED
-    }
-
-    /**
-     * The underlying implementation of a graph structure
-     */
-    public enum Backing {
-        /**
-         * The graph is backed by an adjacency list
-         */
-        ADJ_LIST,
-
-        /**
-         * The graph is backed by an adjacency matrix
-         */
-        ADJ_MATRIX,
-
-        /**
-         * The graph is backed by a set of nodes
-         */
-        NODE_SET
     }
 }

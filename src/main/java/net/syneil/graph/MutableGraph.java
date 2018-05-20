@@ -40,4 +40,12 @@ public interface MutableGraph<V, E extends Edge<V>> extends Graph<V, E> {
      * @return true if this graph was updated as a result of this call; false otherwise
      */
     boolean removeEdges(V source, V target);
+
+    /**
+     * Removes an edge from this graph
+     *
+     * @param edge the edge to remove
+     * @return true if this graph was updated as a result of this call; false otherwise
+     */
+    boolean removeEdge(E edge);
 }

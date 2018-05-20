@@ -22,6 +22,13 @@ public interface Graph<V, E extends Edge<V>> {
     long numberOfEdges();
 
     /**
+     * @return true if this graph has no vertices, false otherwise
+     */
+    default boolean isEmpty() {
+        return numberOfVertices() == 0L;
+    }
+
+    /**
      * @return all of the vertices in this graph as a stream
      */
     Stream<? extends V> vertices();

@@ -1,7 +1,9 @@
-package net.syneil.graph;
+package net.syneil.graph.edgelist;
 
+import net.syneil.graph.GraphTest;
+import net.syneil.graph.LabelledEdge;
+import net.syneil.graph.MutableGraph;
 import net.syneil.graph.edge.ObjectLabelledEdge;
-import net.syneil.graph.edgelist.EdgeListGraph;
 
 import java.util.UUID;
 import java.util.function.BiFunction;
@@ -11,9 +13,9 @@ import java.util.function.Supplier;
  * Tests the {@link EdgeListGraph} is a valid implementation of {@link MutableGraph}.
  */
 public class EdgeListGraphTest extends GraphTest<String, // vertex
-                                                 LabelledEdge<String, String>, // edge
-                                                 EdgeListGraph<String, // graph impl
-                                                               LabelledEdge<String, String>>> {
+        LabelledEdge<String, String>, // edge
+        EdgeListGraph<String, LabelledEdge<String, String>>> // graph impl
+{
     @Override
     protected EdgeListGraph<String, LabelledEdge<String, String>> getEmptyGraph() {
         return new EdgeListGraph<>();
