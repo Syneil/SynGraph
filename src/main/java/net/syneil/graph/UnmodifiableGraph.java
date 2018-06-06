@@ -14,7 +14,7 @@ public class UnmodifiableGraph<V, E extends Edge<V>> implements Graph<V, E> {
     private final List<V> vertices;
     private final List<E> edges;
 
-    public UnmodifiableGraph(Collection<V> vertices, Collection<E> edges) {
+    public UnmodifiableGraph(Collection<? extends V> vertices, Collection<? extends E> edges) {
         Objects.requireNonNull(vertices);
         Objects.requireNonNull(edges);
         this.vertices = Collections.unmodifiableList(new ArrayList<>(vertices));
@@ -32,12 +32,12 @@ public class UnmodifiableGraph<V, E extends Edge<V>> implements Graph<V, E> {
     }
 
     @Override
-    public Stream<? extends V> vertices() {
+    public Stream<V> vertices() {
         return vertices.stream();
     }
 
     @Override
-    public Stream<? extends E> edges() {
+    public Stream<E> edges() {
         return edges.stream();
     }
 
@@ -52,22 +52,18 @@ public class UnmodifiableGraph<V, E extends Edge<V>> implements Graph<V, E> {
     }
 
     @Override
-    public Set<? extends V> neighbours(V v) {
+    public Set<V> neighbours(V v) {
         return edges.stream().filter(Edge.isFrom(v)).map(Edge::getTarget).collect(Collectors.toSet());
     }
 
     @Override
-    public Set<? extends E> getEdges(V source, V target) {
-        return edges.stream()
-                .filter(Edge.isBetween(source, target))
-                .collect(Collectors.toSet());
+    public List<E> getEdges(V source, V target) {
+        return edges.stream().filter(Edge.isBetween(source, target)).collect(Collectors.toList());
     }
 
     @Override
-    public Set<? extends E> getEdges(V source) {
-        return edges.stream()
-                .filter(Edge.isFrom(source))
-                .collect(Collectors.toSet());
+    public List<E> getEdges(V source) {
+        return edges.stream().filter(Edge.isFrom(source)).collect(Collectors.toList());
     }
 
     @Override

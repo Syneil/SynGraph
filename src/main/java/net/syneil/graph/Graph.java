@@ -1,6 +1,7 @@
 package net.syneil.graph;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -12,16 +13,6 @@ import java.util.stream.Stream;
  */
 public interface Graph<V, E extends Edge<V>> {
     /**
-     * @return the number of vertices in this graph
-     */
-    long numberOfVertices();
-
-    /**
-     * @return the number of edges in this graph
-     */
-    long numberOfEdges();
-
-    /**
      * @return true if this graph has no vertices, false otherwise
      */
     default boolean isEmpty() {
@@ -29,9 +20,9 @@ public interface Graph<V, E extends Edge<V>> {
     }
 
     /**
-     * @return all of the vertices in this graph as a stream
+     * @return the number of vertices in this graph
      */
-    Stream<? extends V> vertices();
+    long numberOfVertices();
 
     /**
      * @return all of the edges in this graph as a stream
@@ -40,15 +31,18 @@ public interface Graph<V, E extends Edge<V>> {
 
     /**
      * @param vertex a vertex to find
+     *
      * @return true if the vertex is a node in this graph, false otherwise
      */
     boolean hasVertex(V vertex);
 
     /**
-     * Determines if there is an edge from the source vertex to the target vertex.
+     * Determines if there is an edge from the source vertex to the target vertex. If either of the parameters are not
+     * in this graph, implementations should return false rather than throw an exception.
      *
      * @param source the source vertex
      * @param target the target vertex
+     *
      * @return true if there is an edge from the source to the target
      */
     boolean hasEdge(V source, V target);
@@ -56,31 +50,30 @@ public interface Graph<V, E extends Edge<V>> {
     /**
      * Finds the neighbours of a vertex in this graph. If the vertex is not a member of this graph, the empty set is
      * returned. A neighbour of a vertex v is any vertex w in this graph for which there is a traversible edge from v to
-     * w.
+     * w. If the parameter is not in this graph, implementations may either return the empty set or throw a runtime
+     * exception.
      *
      * @param v the vertex whose neighbours are to be found
+     *
      * @return the set of every vertex in this graph such that {@link #hasEdge hasEdge(v, vertex)} is true
      */
     Set<? extends V> neighbours(V v);
 
     /**
-     * Finds the edges from the source to the target.
+     * Finds the edges from the source to the target. If either of the parameters are not in this graph, implementations
+     * may either return the empty list or throw a runtime exception.
      *
      * @param source the source vertex
      * @param target the target vertex
+     *
      * @return all of the edges from the source to the target
      */
-    Set<? extends E> getEdges(V source, V target);
+    List<? extends E> getEdges(V source, V target);
 
     /**
-     * Finds the edges from the vertex.
+     * Returns the properties of this graph. If any properties are undefined, the result should be a non-null instance
+     * giving {@link Optional#empty} for the relevant getters.
      *
-     * @param source the vertex
-     * @return a set of edges from the vertex
-     */
-    Set<? extends E> getEdges(V source);
-
-    /**
      * @return the properties of this graph
      */
     GraphProperties getProperties();
@@ -98,11 +91,39 @@ public interface Graph<V, E extends Edge<V>> {
     }
 
     /**
+     * @return the number of edges in this graph
+     */
+    long numberOfEdges();
+
+    /**
+     * Returns the vertices of this graph represented as an adjacency list. Only the vertex information is returned in
+     * the map, but the graph properties should honoured. That is, if the graph has {@link GraphProperties.Multiplicity
+     * multiple} edges between vertices then the target vertex should be present twice in the source vertex's list.
+     *
      * @return the vertices of this graph represented as an adjacency list
      */
     default Map<? extends V, ? extends List<V>> adjacencyList() {
-        return vertices().collect(HashMap::new, (map, vertex) -> map.put(vertex, new ArrayList<>(neighbours(vertex))),
-                HashMap::putAll);
+        return vertices().collect(HashMap::new, (map, vertex) -> map.put(vertex, getEdges(vertex).stream()
+                                                                                                 .map(Edge::getTarget)
+                                                                                                 .collect(
+                                                                                                         Collectors
+                                                                                                                 .toList())),
+                                  HashMap::putAll);
     }
+
+    /**
+     * @return all of the vertices in this graph as a stream
+     */
+    Stream<? extends V> vertices();
+
+    /**
+     * Finds the edges from the vertex. If the parameter is not part of this graph, implementations may either return
+     * the empty list or throw a runtime exception.
+     *
+     * @param source the vertex
+     *
+     * @return a set of edges from the vertex
+     */
+    List<? extends E> getEdges(V source);
 
 }

@@ -1,33 +1,69 @@
 package net.syneil.graph.edgelist;
 
-import net.syneil.graph.GraphTest;
-import net.syneil.graph.LabelledEdge;
-import net.syneil.graph.MutableGraph;
-import net.syneil.graph.edge.ObjectLabelledEdge;
+import net.syneil.graph.*;
+import net.syneil.graph.edge.UnlabelledEdge;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 
+import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
-/**
- * Tests the {@link EdgeListGraph} is a valid implementation of {@link MutableGraph}.
- */
-public class EdgeListGraphTest extends GraphTest<String, // vertex
-        LabelledEdge<String, String>, // edge
-        EdgeListGraph<String, LabelledEdge<String, String>>> // graph impl
-{
-    @Override
-    protected EdgeListGraph<String, LabelledEdge<String, String>> getEmptyGraph() {
-        return new EdgeListGraph<>();
+class EdgeListGraphTest {
+    private MutableGraph<UUID, Edge<UUID>> graph;
+
+    @BeforeEach
+    void createEmptyGraph() {
+        graph = Optional.ofNullable(graph).orElseGet(EdgeListGraph::new);
     }
 
-    @Override
-    protected Supplier<String> getVertexSupplier() {
-        return () -> UUID.randomUUID().toString();
+    @Nested
+    class WhenEmpty extends EmptyGraphTest<UUID> {
+        @Override
+        public Graph<UUID, Edge<UUID>> getEmptyGraph() {
+            return graph;
+        }
+
+        @Override
+        public UUID createNewVertex() {
+            return UUID.randomUUID();
+        }
+
+        @Override
+        public Edge<UUID> createNewEdge(UUID source, UUID target) {
+            return new UnlabelledEdge<>(source, target);
+        }
     }
 
-    @Override
-    protected BiFunction<String, String, LabelledEdge<String, String>> getEdgeGenerator() {
-        return (source, target) -> new ObjectLabelledEdge<>(source, target, UUID.randomUUID().toString());
+    @Nested
+    class AsMutable extends MutableGraphTest<UUID> {
+        @Override
+        public MutableGraph<UUID, Edge<UUID>> getMutableGraph() {
+            return graph;
+        }
+
+        @Override
+        public UUID createNewVertex() {
+            return UUID.randomUUID();
+        }
+
+        @Override
+        public Edge<UUID> createNewEdge(UUID source, UUID target) {
+            return new UnlabelledEdge<>(source, target);
+        }
+
+        @Override
+        public boolean loopsPermitted() {
+            return true;
+        }
+
+        @Override
+        public boolean multipleEdgesPermitted() {
+            return true;
+        }
+
+        @Override
+        public boolean edgesAreDirected() {
+            return true;
+        }
     }
 }

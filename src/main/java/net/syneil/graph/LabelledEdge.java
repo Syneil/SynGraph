@@ -11,15 +11,11 @@ import java.util.function.Predicate;
  */
 public interface LabelledEdge<V, L> extends Edge<V> {
     /**
-     * @return the label for this edge
-     */
-    L getLabel();
-
-    /**
      * Creates a predicate that tests if edges have a specific label
      *
      * @param label the label to match
      * @param <L> the type used for labels
+     *
      * @return a predicate that evaluates to true for edges with labels matching that given
      *
      * @see Objects#equals(Object, Object)
@@ -27,4 +23,9 @@ public interface LabelledEdge<V, L> extends Edge<V> {
     static <L> Predicate<LabelledEdge<?, L>> hasLabel(L label) {
         return edge -> Objects.equals(label, edge.getLabel());
     }
+
+    /**
+     * @return the label for this edge
+     */
+    L getLabel();
 }
