@@ -1,0 +1,31 @@
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.14'
+    id 'java'
+}
+repositories {
+     jcenter()
+}
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+}
+
+group = 'net.syneil'
+version = '0.0.1-SNAPSHOT'
+
+description = """Syneil's Graphs"""
+
+def javaVersion = JavaVersion.VERSION_1_10
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+test {
+    useJUnitPlatform()
+}
+
+lombok {
+    version = "1.16.22"
+    sha256 = ""
+}
